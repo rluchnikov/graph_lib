@@ -10,9 +10,9 @@ public class Edge<E> {
 	
 	private final Vertex<E> source;
     private final Vertex<E> next;
-    
-    
-	public Edge(Vertex<E> source, Vertex<E> next) {
+
+
+	Edge(Vertex<E> source, Vertex<E> next) {
 		this.source = source;
 		this.next = next;
 	}

@@ -51,8 +51,8 @@ class GraphImplTest {
 
 	@Test
 	void addDirectedEdge() {
-		Graph<String> directedGraph =	new GraphImpl<String>();
-        directedGraph.addEdge("test1","test2",true);
+		Graph<String> directedGraph =	new GraphImpl<String>(true);
+        directedGraph.addEdge("test1","test2");
 		assertAll("Should return edges",
 				() -> assertNotNull( directedGraph.getEdge("test1")),
 				() -> assertTrue(directedGraph.getEdge("test2").size() == 0));
@@ -60,8 +60,8 @@ class GraphImplTest {
 
 	@Test
     void addUnderectedEdge() {
-        Graph<String> undirectedGraph =	new GraphImpl<String>();
-        undirectedGraph.addEdge("test1","test2",false);
+        Graph<String> undirectedGraph =	new GraphImpl<String>(false);
+        undirectedGraph.addEdge("test1","test2");
         assertAll("Should return edges",
                 () -> assertNotNull(undirectedGraph.getEdge("test1")),
                 () -> assertNotNull(undirectedGraph.getEdge("test2")));
@@ -69,12 +69,12 @@ class GraphImplTest {
 
 	@Test
 	void addConcurrenceEdge() {
-		Graph<String> dirGraph = new GraphImpl<String>();
-        Graph<String> unGraph =	new GraphImpl<String>();
+		Graph<String> dirGraph = new GraphImpl<String>(true);
+        Graph<String> unGraph =	new GraphImpl<String>(false);
 		List<Thread> threads = Stream.of(
-				new Thread(()-> dirGraph.addEdge("test1","test2",true)),
-				new Thread(()-> unGraph.addEdge("test1","test3",false)),
-				new Thread(()-> dirGraph.addEdge("test2","test3",true))
+				new Thread(()-> dirGraph.addEdge("test1","test2")),
+				new Thread(()-> unGraph.addEdge("test1","test3")),
+				new Thread(()-> dirGraph.addEdge("test2","test3"))
 		).peek(Thread::start).collect(Collectors.toList());
 		for (Thread thread : threads) {
 			try {
@@ -92,11 +92,11 @@ class GraphImplTest {
 
 	@Test
 	void getPathUngraph() {
-		Graph<String> unGraph =	new GraphImpl<String>();
+		Graph<String> unGraph =	new GraphImpl<String>(false);
 		List<Thread> threads = Stream.of(
-				new Thread(()-> unGraph.addEdge("test1","test2",false)),
-				new Thread(()-> unGraph.addEdge("test3","test4",false)),
-				new Thread(()-> unGraph.addEdge("test2","test4",false))
+				new Thread(()-> unGraph.addEdge("test1","test2")),
+				new Thread(()-> unGraph.addEdge("test3","test4")),
+				new Thread(()-> unGraph.addEdge("test2","test4"))
 		).peek(Thread::start).collect(Collectors.toList());
 		for (Thread thread : threads) {
 			try {
@@ -112,11 +112,11 @@ class GraphImplTest {
 
 	@Test
 	void getPathDirgraph() {
-		Graph<String> directedGraph =	new GraphImpl<String>();
+		Graph<String> directedGraph =	new GraphImpl<String>(true);
 		List<Thread> threads = Stream.of(
-				new Thread(()-> directedGraph.addEdge("test1","test2",true)),
-				new Thread(()-> directedGraph.addEdge("test3","test4",true)),
-				new Thread(()-> directedGraph.addEdge("test2","test4",true))
+				new Thread(()-> directedGraph.addEdge("test1","test2")),
+				new Thread(()-> directedGraph.addEdge("test3","test4")),
+				new Thread(()-> directedGraph.addEdge("test2","test4"))
 		).peek(Thread::start).collect(Collectors.toList());
 		for (Thread thread : threads) {
 			try {

@@ -29,10 +29,19 @@ public class GraphImpl<E> implements Graph<E> {
 	private CopyOnWriteArrayList<Vertex<E>> vertices = new CopyOnWriteArrayList<>();
 	
 	private ConcurrentHashMap<Vertex<E>, ArrayList<Edge<E>>> adjList = new ConcurrentHashMap<>();
-	
-       
+
+	private Boolean isDirected;
+
+	GraphImpl() {
+
+	}
+
+	GraphImpl(Boolean isDirected) {
+		this.isDirected = isDirected;
+	}
+
     @Override
-    public synchronized void addEdge(E source, E destination,Boolean isDirected) {
+    public synchronized void addEdge(E source, E destination) {
     	if (null == source || null == destination) {
 			throw new NullPointerException("Elements cannot be null !!");
 		}
@@ -55,7 +64,7 @@ public class GraphImpl<E> implements Graph<E> {
     	if (null == element)
 			throw new NullPointerException("Element cannot be null !!");
 
-    	Vertex v = new Vertex(element);
+    	Vertex<E> v = new Vertex<>(element);
 		System.out.printf("%s \n",
 				Thread.currentThread().getName());
     	if (vertices.contains(v)) {
@@ -69,7 +78,7 @@ public class GraphImpl<E> implements Graph<E> {
     }
     
     public Vertex<E> getVertex(E element) {
-    	return vertices.stream().filter(e -> e.getValue().equals(element)).findAny().orElse(new Vertex());
+    	return vertices.stream().filter(e -> e.getValue().equals(element)).findAny().orElse(new Vertex<>());
     }
 
     @Override
@@ -115,7 +124,11 @@ public class GraphImpl<E> implements Graph<E> {
 					visited.add(edge);
 					Vertex<E> neighbor = edge.getNext();
 					neighbor.mark();
-					if (neighbor.equals(target)) {
+					if (neighbor.equals(target) && isDirected) {
+						return visited;
+					} else if (neighbor.equals(target) && !isDirected){
+						visited.add(adjList.get(neighbor).stream().filter(j-> j.getNext().equals(i)).findFirst()
+								.orElse(new Edge<>(new Vertex<E>(),new Vertex<E>())));
 						return visited;
 					}
 					next.add(neighbor);

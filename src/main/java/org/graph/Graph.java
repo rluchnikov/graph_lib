@@ -10,9 +10,9 @@ public interface Graph<E> {
 	 * 
 	 * @param source the name of the first Vertex
 	 * @param destination the name of the second Vertex
-	 * @param isDirected direction
+	 *
 	 */
-	 void addEdge(E source, E destination,Boolean isDirected);
+	 void addEdge(E source, E destination);
 
 	List<Edge<E>> getEdge(E vertex);
 
